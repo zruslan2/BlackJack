@@ -55,8 +55,13 @@ void BlackJack::pushCardForDiller()
 
 void BlackJack::dillerSteps()
 {
-	if (getPoints(getDillerCards()) < 18)
-		pushCardForDiller();
+	while (true)
+	{
+		if (getPoints(getDillerCards()) < 18)
+			pushCardForDiller();
+		else
+			break;				
+	}	
 	setDillerStoped(true);
 }
 
@@ -113,30 +118,40 @@ bool BlackJack::isGameStart() const
 
 wstring BlackJack::resultGame()
 {
-	wstring res;
+	wstring res=L"";
 	if (getPoints(getPlayerCards()) == 21 && getPoints(getDillerCards()) != 21)
 	{
 		res = L"Congratulations, You win!!!";
 		money += 1.5*bet;
+		return res;
 	}
 	if (getPoints(getPlayerCards()) > 21)
+	{
 		res = L"You loss :-(";
+		return res;
+	}		
 	if (getPoints(getPlayerCards()) <= 21 && getPoints(getDillerCards()) > 21)
 	{
 		res = L"Congratulations, You win!!!";
 		money += 1.5*bet;
+		return res;
 	}
 	if (getPoints(getPlayerCards()) > getPoints(getDillerCards()))
 	{
 		res = L"Congratulations, You win!!!";
 		money += 1.5*bet;
+		return res;
 	}
 	if (getPoints(getPlayerCards()) < getPoints(getDillerCards()))
+	{
 		res = L"You loss :-(";
+		return res;
+	}
 	if (getPoints(getPlayerCards()) == getPoints(getDillerCards()))
 	{
 		res = L"Congratulations, draw!!!";
 		money += 1*bet;
+		return res;
 	}
 	return res;
 }
