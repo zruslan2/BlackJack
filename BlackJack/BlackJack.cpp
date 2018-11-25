@@ -30,7 +30,6 @@ bool BlackJack::startRound()
 		player.push_back(this->getCard());
 		diller.push_back(this->getCard());
 	}
-
 }
 
 Card BlackJack::getCard()
@@ -42,6 +41,23 @@ Card BlackJack::getCard()
 	}
 	return deck_.getNextCard();
 
+}
+
+void BlackJack::pushCardForPlayer()
+{
+	player.push_back(this->getCard());	
+}
+
+void BlackJack::pushCardForDiller()
+{
+	diller.push_back(this->getCard());
+}
+
+void BlackJack::dillerSteps()
+{
+	if (getPoints(getDillerCards()) < 18)
+		pushCardForDiller();
+	setDillerStoped(true);
 }
 
 int BlackJack::getPoints(const vector<Card>& d)
@@ -69,12 +85,58 @@ void BlackJack::setBet(int bet)
 	this->bet = bet;
 }
 
+void BlackJack::setPlayerStoped(bool b)
+{
+	this->playerStoped = b;
+}
+
+void BlackJack::setDillerStoped(bool b)
+{
+	this->dillerStoped = b;
+}
+
 void BlackJack::addMoney(int money)
 {
 	this->money += money;
 }
 
+void BlackJack::eraseCard()
+{
+	player.clear();
+	diller.clear();
+}
+
 bool BlackJack::isGameStart() const
 {
-	return player.size() == 2;
+	return player.size() >= 2;
+}
+
+wstring BlackJack::resultGame()
+{
+	wstring res;
+	if (getPoints(getPlayerCards()) == 21 && getPoints(getDillerCards()) != 21)
+	{
+		res = L"Congratulations, You win!!!";
+		money += 1.5*bet;
+	}
+	if (getPoints(getPlayerCards()) > 21)
+		res = L"You loss :-(";
+	if (getPoints(getPlayerCards()) <= 21 && getPoints(getDillerCards()) > 21)
+	{
+		res = L"Congratulations, You win!!!";
+		money += 1.5*bet;
+	}
+	if (getPoints(getPlayerCards()) > getPoints(getDillerCards()))
+	{
+		res = L"Congratulations, You win!!!";
+		money += 1.5*bet;
+	}
+	if (getPoints(getPlayerCards()) < getPoints(getDillerCards()))
+		res = L"You loss :-(";
+	if (getPoints(getPlayerCards()) == getPoints(getDillerCards()))
+	{
+		res = L"Congratulations, draw!!!";
+		money += 1*bet;
+	}
+	return res;
 }

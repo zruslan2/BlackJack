@@ -30,17 +30,31 @@ void BlackJackConsoleView::start()
 		while (true)
 		{
 			GotoXY(x, y);
-			wcin >> choice;
-			if (!game.isGameStart())
+			if (game.getDillerStoped() != true)
+				wcin >> choice;
+			else
 			{
-				if (choice > 0 && choice < 4) break;
+				red();
+				wcout << game.resultGame();
+				system("pause");
+				game.eraseCard();
+				choice = 0;
+				game.setPlayerStoped(false);
+				game.setDillerStoped(false);
+				black();
+				break;
 			}
-			if (game.isGameStart())
+
+			if (!game.isGameStart())
 			{
 				if (choice > 0 && choice < 5) break;
 			}
+			if (game.isGameStart())
+			{
+				if (choice > 0 && choice < 4) break;
+			}
 		}
-		
+
 		//если игры нет
 		if (!game.isGameStart()) {
 			if (choice == 4) break;
@@ -50,31 +64,34 @@ void BlackJackConsoleView::start()
 				continue;
 			}
 			if (choice == 2) {
-				printAddMoney(x,y);
+				printAddMoney(x, y);
 				continue;
 			}
 			if (choice == 3) {
-				printSetBet(x,y);
+				printSetBet(x, y);
 				continue;
 			}
-
-
 		}
 
 		if (game.isGameStart()) {
-			//1 - get new Card 2 - stop 3 - exit
-			//int result = game.checkRound();
-			//if (result == 1) continue;
-			//if (result == 2) {
 
-			//}
-			////
-			//}
+			if (choice == 3) break;
 
+			if (choice == 1) {
+				game.pushCardForPlayer();
+				continue;
+			}
+			if (choice == 2) {
+				game.setPlayerStoped(true);
+				game.dillerSteps();
+				continue;
+			}
 		}
-		system("cls");
-		cout << "Good bye!\n";
+
 	}
+	system("cls");
+	wcout << L"Good bye!\n";
+	system("pause");
 }
 
 	void BlackJackConsoleView::printScreen()
@@ -90,16 +107,33 @@ void BlackJackConsoleView::start()
 		GotoXY(x, y);
 		wcout << "diller\'s cards\n";
 		y++;
-		for (size_t i = 0; i < game.getDillerCards().size(); i++)
+		if (game.isGameStart())
 		{
-			ViewCard(game.getDillerCards()[i].getMast(), game.getDillerCards()[i].getNom(), x, y);
-			x += 8;
-		}
-		y+=8;
+			if (game.getPlayerStoped() == false)
+			{
+				for (size_t i = 0; i < game.getDillerCards().size()-1; i++)
+					{
+						ViewCard(game.getDillerCards()[i].getMast(), game.getDillerCards()[i].getNom(), x, y);
+						x += 8;
+					}
+				// скрытая карта
+				ViewCard(1, 1, x, y);
+			}
+			else
+			{
+				for (size_t i = 0; i < game.getDillerCards().size(); i++)
+				{
+					ViewCard(game.getDillerCards()[i].getMast(), game.getDillerCards()[i].getNom(), x, y);
+					x += 8;
+				}
+			}
+			y += 8;
+		}		
 		x = 4;
 		black();
 		GotoXY(x, y);
-		wcout << "Diller\'s points = " << game.getPoints(game.getDillerCards());
+		if (game.getPlayerStoped() == true)
+			wcout << "Diller\'s points = " << game.getPoints(game.getDillerCards());
 		y++;
 		GotoXY(x, y);
 		y++;
@@ -109,12 +143,15 @@ void BlackJackConsoleView::start()
 		GotoXY(x, y);
 		wcout << "Your cards ";
 		y++;
-		for (size_t i = 0; i < game.getPlayerCards().size(); i++)
+		if (game.isGameStart())
 		{
-			ViewCard(game.getPlayerCards()[i].getMast(), game.getPlayerCards()[i].getNom(), x, y);
-			x += 8;
+			for (size_t i = 0; i < game.getPlayerCards().size(); i++)
+			{
+				ViewCard(game.getPlayerCards()[i].getMast(), game.getPlayerCards()[i].getNom(), x, y);
+				x += 8;
+			}
+			y += 8;
 		}
-		y += 8;
 		x = 4;
 		black();
 		GotoXY(x, y);
@@ -249,6 +286,7 @@ void BlackJackConsoleView::start()
 			red();
 		}
 		wstring Cstr = L"\u2502\     \u2502\n";
+		wstring Cstr2 = L"\u2502\XXXXX\u2502\n";
 		wstring Jstr = L"\u2502\jack \u2502\n";
 		wstring Qstr = L"\u2502\queen\u2502\n";
 		wstring Kstr = L"\u2502\king \u2502\n";
@@ -536,6 +574,20 @@ void BlackJackConsoleView::start()
 			y++;
 			GotoXY(x, y);
 			wcout << Cstr;
+			y++;
+			GotoXY(x, y);
+			bottom();
+		}
+		else if (n == 1)
+		{
+			GotoXY(x, y);
+			top();
+			for (size_t i = 0; i < 5; i++)
+			{
+				y++;
+				GotoXY(x, y);
+				wcout << Cstr2;
+			}
 			y++;
 			GotoXY(x, y);
 			bottom();

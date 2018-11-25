@@ -9,6 +9,8 @@ class BlackJack
 	vector<Card> player;
 	vector<Card> diller;
 
+	bool playerStoped=false;
+	bool dillerStoped=false;
 	deck deck_;
 
 public:
@@ -18,6 +20,11 @@ public:
 	bool startRound();
 	Card getCard();
 
+	void pushCardForPlayer();
+	void pushCardForDiller();
+
+	void dillerSteps();
+
 	const vector<Card> & getPlayerCards() const { return player; }
 	const vector<Card> & getDillerCards() const { return diller; }
 
@@ -26,9 +33,16 @@ public:
 	int getBet();
 	int getMoney();
 	void setBet(int bet);
+	void setPlayerStoped(bool b);
+	void setDillerStoped(bool b);
+	bool getPlayerStoped()const { return playerStoped; }
+	bool getDillerStoped()const { return dillerStoped; }
 	void addMoney(int money);
 
+
+	void eraseCard();
 	bool isGameStart()const;
+	wstring resultGame();
 };
 
 
