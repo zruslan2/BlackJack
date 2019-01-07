@@ -191,7 +191,7 @@ void BlackJackConsoleView::start()
 			wcout << "1 - new game";
 			y++;
 			GotoXY(x, y);
-			wcout << "2- Add money";
+			wcout << "2 - Add money";
 			y++;
 			GotoXY(x, y);
 			wcout << "3 - Set Bet";
